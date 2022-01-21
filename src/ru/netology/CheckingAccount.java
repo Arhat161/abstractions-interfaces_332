@@ -20,46 +20,54 @@ public class CheckingAccount extends Account implements AccountInterface {
     }
 
     public boolean isNull(int amount) {
-        if(amount > 0 && (this.getBalance() - amount) < 0) {
-            return true;
-        }
-        return false;
+        return amount > 0 && (this.getBalance() - amount) < 0;
     }
 
     @Override
-    public void pay(int amount) {
-        System.out.println("\nОплата суммы [" + amount + "] руб. со счета <" + this.getName() + "> ...");
+    public boolean pay(int amount) {
+        System.out.println("Оплата суммы [" + amount + "] руб. со счета <" + this.getName() + "> ...");
+        boolean res = false;
         if(amount > 0) {
             if(this.isNull(amount)) {
                 System.out.println("Недостаточно денег на счету <" + this.getName() + "> для оплаты!");
             } else {
                 System.out.println("Оплата выполнена успешно!");
+                res = true;
             }
         } else {
             System.out.println("Укажите сумму больше, чем ноль!");
         }
+        return res;
     }
 
     @Override
-    public void transfer(Account account, int amount) {
-        System.out.println("\nПереводим сумму [" + amount + "] руб. на счет <" + account.getName() + "> ...");
+    public boolean transfer(Account account, int amount) {
+        System.out.println("Переводим сумму [" + amount + "] руб. на счет <" + account.getName() + "> ...");
         if(amount > 0) {
             if(this.isNull(amount)) {
                 System.out.println("Недостаточно денег на счету <" + this.getName() + "> для перевода на счет <" + account.getName() + "> !");
+                return false;
             } else {
-                this.balance -= amount; // списание с текущего счета
-                account.addMoney(amount); // зачисление на другой счет
-                System.out.println("Перевод суммы [" + amount + "] руб. на счет <" + account.getName() + "> выполнен успешно!");
+                // проверяем что перевод идет не на КРЕДИТНЫЙ счет;
+                if(!account.addMoney(amount)){
+                    return false;
+                } else {
+                    this.balance -= amount; // списание с текущего счета
+                    System.out.println("Перевод суммы [" + amount + "] руб. на счет <" + account.getName() + "> выполнен успешно!");
+                    return true;
+                }
             }
         } else {
             System.out.println("Укажите сумму больше, чем ноль!");
+            return false;
         }
     }
 
     @Override
-    public void addMoney(int amount) {
+    public boolean addMoney(int amount) {
         this.balance += amount;
         System.out.println("Пополнение на сумму [" + amount + "] руб. счета <" + this.getName() + ">, баланс : " + this.getBalance() + " руб.");
+        return true;
     }
 
     @Override

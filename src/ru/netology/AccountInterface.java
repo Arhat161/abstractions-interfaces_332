@@ -2,9 +2,9 @@ package ru.netology;
 
 public interface AccountInterface {
 
-    public void pay(int amount);
+    public boolean pay(int amount);
 
-    public void transfer(Account account, int amount);
+    public boolean transfer(Account account, int amount);
 
-    public void addMoney(int amount);
+    public boolean addMoney(int amount);
 }
